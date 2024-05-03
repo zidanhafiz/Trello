@@ -6,12 +6,13 @@ export const registerSchema = z.object({
     .min(3, {
       message: 'Name must be at least 3 characters.',
     })
-    .max(20),
+    .max(30),
   email: z
     .string()
     .min(5, {
       message: 'Email must be at least 5 characters.',
     })
+    .max(30)
     .email(),
   password: z
     .string()
@@ -31,3 +32,21 @@ export const profileSchema = z.object({
 });
 
 export type ProfileSchema = z.infer<typeof profileSchema>;
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .min(5, {
+      message: 'Email must be at least 5 characters.',
+    })
+    .max(30)
+    .email(),
+  password: z
+    .string()
+    .min(5, {
+      message: 'Password must be at least 5 characters.',
+    })
+    .max(30),
+});
+
+export type LoginSchema = z.infer<typeof loginSchema>;
