@@ -16,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { registerSchema, RegisterSchema } from '@/lib/schema';
 import Link from 'next/link';
+import ErrorMessage from '@/components/ErrorMessage';
 
 const Register = () => {
   const form = useForm<RegisterSchema>({
@@ -67,6 +68,10 @@ const Register = () => {
               </FormItem>
             )}
           />
+          <ErrorMessage>
+            Oops! It seems this email is already in use. Please try another email address
+            or sign in with your existing account
+          </ErrorMessage>
           <FormField
             control={form.control}
             name='password'
