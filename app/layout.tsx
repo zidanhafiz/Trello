@@ -8,7 +8,10 @@ import { cn } from '@/lib/utils';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Trello',
+  title: {
+    template: 'Trello %s',
+    default: 'Trello',
+  },
   description: 'Fullstack test internship',
 };
 
