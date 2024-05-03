@@ -29,7 +29,7 @@ export default function RootLayout({
           <header>
             <Navbar />
           </header>
-          <main className='py-8 px-4'>{children}</main>
+          <main className='py-8 px-4 max-w-lg mx-auto'>{children}</main>
         </ThemeProvider>
       </body>
     </html>

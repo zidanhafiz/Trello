@@ -115,7 +115,7 @@ const Register = () => {
           </Link>
         </p>
         <p>
-          Already have an account?
+          Already have an account?{' '}
           <Link
             href='login'
             className='underline'
