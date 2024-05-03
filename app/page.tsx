@@ -2,13 +2,11 @@
 import Image from 'next/image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -17,22 +15,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import Heading from '@/components/Heading';
-
-const formSchema = z.object({
-  fullName: z.string().min(3, {
-    message: 'Full Name must be at least 3 characters.',
-  }),
-});
+import { profileSchema, ProfileSchema } from '@/lib/schema';
 
 export default function Home() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<ProfileSchema>({
+    resolver: zodResolver(profileSchema),
   });
 
-  // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
+  function onSubmit(values: ProfileSchema) {
     console.log(values);
   }
   return (
