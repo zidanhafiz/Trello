@@ -4,26 +4,38 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { LoginSchema, loginSchema } from '@/lib/schema';
 import Heading from '@/components/Heading';
 import ErrorMessage from '@/components/ErrorMessage';
+import { useState } from 'react';
+
+const data = {
+  email: 'zidan@gmail.com',
+  password: 'zidan123',
+};
 
 const Login = () => {
+  const [invalid, setInvalid] = useState<string | null>(null);
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
   });
 
+  const { errors } = form.formState;
+
   function onSubmit(values: LoginSchema) {
-    console.log(values);
+    const { email, password } = values;
+    if (email !== data.email || password !== data.password) {
+      return setInvalid(
+        `The email and password you entered don't match. Please try again`
+      );
+    }
+    return setInvalid(null);
   }
 
   return (
@@ -56,10 +68,10 @@ const Login = () => {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
+          {errors.email && <ErrorMessage>{errors.email?.message}</ErrorMessage>}
           <FormField
             control={form.control}
             name='password'
@@ -73,13 +85,11 @@ const Login = () => {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
-          <ErrorMessage>
-            The email and password you entered don&apos;t match. Please try again
-          </ErrorMessage>
+          {errors.password && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
+          {invalid && !errors.password && <ErrorMessage>{invalid}</ErrorMessage>}
           <Button
             type='submit'
             className='w-full mt-5'

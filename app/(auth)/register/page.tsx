@@ -1,31 +1,54 @@
 'use client';
-import Heading from '@/components/Heading';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
+import { useEffect, useReducer, useState } from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { registerSchema, RegisterSchema } from '@/lib/schema';
-import Link from 'next/link';
 import ErrorMessage from '@/components/ErrorMessage';
+import Heading from '@/components/Heading';
+import {
+  handlePasswordState,
+  PasswordState,
+  passwordValidReducer,
+  passwordValidState,
+} from '@/lib/passwordReducer';
 
 const Register = () => {
+  const [passwordState, setPasswordState] = useReducer(
+    passwordValidReducer,
+    passwordValidState
+  );
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      name: '',
+      password: '',
+    },
   });
+  const {
+    getFieldState,
+    watch,
+    formState: { errors },
+  } = form;
+
+  const { isDirty } = getFieldState('password');
+
+  const passwordWatch = watch('password');
 
   function onSubmit(values: RegisterSchema) {
     console.log(values);
   }
+
+  useEffect(() => {
+    const result = registerSchema.shape.password.safeParse(passwordWatch);
+    handlePasswordState(result, setPasswordState);
+  }, [passwordWatch]);
 
   return (
     <div>
@@ -47,10 +70,10 @@ const Register = () => {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
+          {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
           <FormField
             control={form.control}
             name='email'
@@ -64,14 +87,10 @@ const Register = () => {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
-          <ErrorMessage>
-            Oops! It seems this email is already in use. Please try another email address
-            or sign in with your existing account
-          </ErrorMessage>
+          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
           <FormField
             control={form.control}
             name='password'
@@ -85,10 +104,12 @@ const Register = () => {
                     {...field}
                   />
                 </FormControl>
-                <FormMessage />
               </FormItem>
             )}
           />
+          {isDirty || errors.password ? (
+            <PasswordMessage passwordErrors={passwordState} />
+          ) : null}
           <Button
             type='submit'
             className='w-full mt-5'
@@ -124,6 +145,39 @@ const Register = () => {
           </Link>
         </p>
       </div>
+    </div>
+  );
+};
+
+const PasswordMessage = ({ passwordErrors }: { passwordErrors: PasswordState }) => {
+  const [errors, setErrors] = useState<{ error: boolean; message: string }[]>([]);
+
+  useEffect(() => {
+    const arr = Object.keys(passwordErrors).map((key) => {
+      return passwordErrors[key];
+    });
+
+    setErrors(arr);
+  }, [passwordErrors]);
+
+  return (
+    <div className='p-4 bg-[#FFF5F5] border-2 border-[#FBDFDF] rounded-md text-slate-500'>
+      <ul className='space-y-4'>
+        {errors.map((err, i) => (
+          <li
+            key={i}
+            className='flex items-center gap-2 leading-3'
+          >
+            <Image
+              src={err.error ? '/uncheck.png' : '/check.png'}
+              alt='check'
+              width={16}
+              height={16}
+            />
+            {err.message}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
