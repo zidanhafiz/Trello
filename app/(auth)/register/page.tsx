@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import {  useForm } from 'react-hook-form';
 import { useEffect, useReducer, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -17,12 +17,15 @@ import {
   passwordValidReducer,
   passwordValidState,
 } from '@/lib/passwordReducer';
+import { useRouter } from 'next/navigation';
+import { registerNewUser } from '@/lib/fetch/register';
 
 const Register = () => {
   const [passwordState, setPasswordState] = useReducer(
     passwordValidReducer,
     passwordValidState
   );
+  const router = useRouter();
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -34,16 +37,23 @@ const Register = () => {
   const {
     getFieldState,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    setError,
   } = form;
 
   const { isDirty } = getFieldState('password');
 
   const passwordWatch = watch('password');
 
-  function onSubmit(values: RegisterSchema) {
-    console.log(values);
-  }
+  const onSubmit = async (values: RegisterSchema) => {
+    const { data, error } = await registerNewUser(values);
+
+    if (error) {
+      return setError(error?.type as 'root', { message: error.message });
+    }
+
+    router.push(`/register/${data.userId}`);
+  };
 
   useEffect(() => {
     const result = registerSchema.shape.password.safeParse(passwordWatch);
@@ -58,6 +68,7 @@ const Register = () => {
           onSubmit={form.handleSubmit(onSubmit)}
           className='grid gap-y-4'
         >
+          {errors.root && <p>{errors.root.message}</p>}
           <FormField
             control={form.control}
             name='name'
@@ -113,8 +124,9 @@ const Register = () => {
           <Button
             type='submit'
             className='w-full mt-5'
+            disabled={isSubmitting}
           >
-            Sign Up
+            {isSubmitting ? 'Loading' : 'Sign Up'}
           </Button>
         </form>
       </Form>
