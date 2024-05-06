@@ -1,18 +1,23 @@
-import Heading from '@/components/Heading';
-import { getUserById } from '@/lib/models/user';
+import { getUserById, updateTokenUser } from '@/lib/models/user';
 import { redirect } from 'next/navigation';
+import jwt from 'jsonwebtoken';
+import Heading from '@/components/Heading';
 
-const VerificationPage = async ({ params }: { params: { id: string } }) => {
+const ResendPage = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
   const user = await getUserById(id);
 
   if (!user) redirect('/not-found');
 
-  if (user.isVerified) redirect('/');
+  const newToken = jwt.sign({ email: user.email }, process.env.SECRET_KEY as string, {
+    expiresIn: '15m',
+  });
+
+  await updateTokenUser(id, newToken);
 
   return (
     <div>
-      <Heading size='md'>Verify Your Email to Get Started</Heading>
+      <Heading size='md'>Confirmation link was sent into your email!</Heading>
       <div className='bg-white p-4 rounded-md shadow-sm'>
         <p className='text-slate-500'>
           A confirmation link has been sent to your email address{' '}
@@ -24,4 +29,4 @@ const VerificationPage = async ({ params }: { params: { id: string } }) => {
   );
 };
 
-export default VerificationPage;
+export default ResendPage;

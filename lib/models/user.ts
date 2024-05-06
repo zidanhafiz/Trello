@@ -21,3 +21,37 @@ export const getUserByEmail = async (email: string) => {
     },
   });
 };
+
+export const getUserById = async (id: string) => {
+  return await prisma.user.findUnique({
+    where: {
+      id,
+    },
+  });
+};
+
+export const updateIsVerifiedUser = async (id: string, verified: boolean) => {
+  return await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      isVerified: verified,
+    },
+  });
+};
+
+export const updateTokenUser = async (id: string, token: string) => {
+  return await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      token: {
+        update: {
+          token,
+        },
+      },
+    },
+  });
+};
