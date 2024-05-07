@@ -11,11 +11,7 @@ import Heading from '@/components/Heading';
 import ErrorMessage from '@/components/ErrorMessage';
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
-
-const data = {
-  email: 'zidan@gmail.com',
-  password: 'zidan123',
-};
+import { loginUser } from '@/lib/fetch/login';
 
 const Login = () => {
   const [invalid, setInvalid] = useState<string | null>(null);
@@ -28,17 +24,18 @@ const Login = () => {
     },
   });
 
-  const { errors, isSubmitting } = form.formState;
+  const {
+    formState: { errors, isSubmitting },
+  } = form;
 
-  function onSubmit(values: LoginSchema) {
-    const { email, password } = values;
-    if (email !== data.email || password !== data.password) {
-      return setInvalid(
-        `The email and password you entered don't match. Please try again`
-      );
-    }
-    return setInvalid(null);
-  }
+  const onSubmit = async (values: LoginSchema) => {
+    const res = await loginUser(values);
+
+    if (res.message) return setInvalid(res.message)
+
+    setInvalid(null);
+
+  };
 
   return (
     <div>

@@ -58,3 +58,14 @@ export const updateTokenUser = async (id: string, token: string) => {
     },
   });
 };
+
+export const updateAccessTokenUser = async (id: string, accessToken: string) => {
+  return await prisma.user.update({
+    where: {
+      id,
+    },
+    data: {
+      accessToken,
+    },
+  });
+};

@@ -3,7 +3,6 @@ import { createUser, getUserByEmail } from '@/lib/models/user';
 import jwt from 'jsonwebtoken';
 import { registerSchema } from '@/lib/schema';
 import { NextRequest, NextResponse } from 'next/server';
-import { VerifyData } from '@/lib/types';
 import { sendVerifyEmail } from '@/lib/mailtrap';
 
 export const POST = async (req: NextRequest) => {
