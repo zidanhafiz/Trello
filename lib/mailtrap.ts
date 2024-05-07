@@ -1,13 +1,18 @@
 'use server';
-import { MailtrapClient } from 'mailtrap';
+import { MailtrapClient, MailtrapClientConfig } from 'mailtrap';
 import { VerifyData } from './types';
 
-const TOKEN = 'de1a43b65b95ce343952ea4b2e66139d';
+const TOKEN = process.env.MAILTRAP_SEND_TOKEN;
+const ENDPOINT = process.env.MAILTRAP_SEND_ENDPOINT;
+const URL = process.env.URL;
 
-const client = new MailtrapClient({ token: TOKEN });
+const client = new MailtrapClient({
+  endpoint: ENDPOINT,
+  token: TOKEN,
+} as MailtrapClientConfig);
 
 const sender = {
-  email: 'hrofiyani@gmail.com',
+  email: 'mailtrap@zidanhafiz.site',
   name: 'Trello',
 };
 
@@ -18,7 +23,7 @@ export const sendVerifyEmail = async (verifyData: VerifyData) => {
     },
   ];
 
-  const verifyLink = `https://localhost:3000/register/${verifyData.userId}/verify?token=${verifyData.token}`;
+  const verifyLink = `${URL}/register/${verifyData.userId}/verify?token=${verifyData.token}`;
 
   const res = await client.send({
     from: sender,
@@ -41,7 +46,7 @@ export const resendVerifyEmail = async (verifyData: VerifyData) => {
     },
   ];
 
-  const verifyLink = `https://localhost:3000/register/${verifyData.userId}/verify?token=${verifyData.token}`;
+  const verifyLink = `${URL}/register/${verifyData.userId}/verify?token=${verifyData.token}`;
 
   const res = await client.send({
     from: sender,
