@@ -11,6 +11,8 @@ const ResendPage = async ({ params }: { params: { id: string } }) => {
 
   if (!user) redirect('/not-found');
 
+  if (user.isVerified) redirect('/');
+
   const newToken = jwt.sign({ email: user.email }, process.env.SECRET_KEY as string, {
     expiresIn: '15m',
   });

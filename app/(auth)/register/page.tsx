@@ -19,10 +19,10 @@ import {
 } from '@/lib/passwordReducer';
 import { useRouter } from 'next/navigation';
 import { registerNewUser } from '@/lib/fetch/register';
-import { sendVerifyEmail } from '@/lib/mailtrap';
-import { VerifyData } from '@/lib/types';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const Register = () => {
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [passwordState, setPasswordState] = useReducer(
     passwordValidReducer,
     passwordValidState
@@ -54,16 +54,7 @@ const Register = () => {
       return setError(error?.type as 'root', { message: error.message });
     }
 
-    const verifyData = {
-      userId: data.userId,
-      username: data.name,
-      email: data.email,
-      token: data.token,
-    } as VerifyData;
-
-    await sendVerifyEmail(verifyData);
-
-    router.push(`/register/${data.userId}`);
+    return router.push(`/register/${data.userId}`);
   };
 
   useEffect(() => {
@@ -83,6 +74,7 @@ const Register = () => {
           <FormField
             control={form.control}
             name='name'
+            disabled={isSubmitting}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Your Name</FormLabel>
@@ -99,6 +91,7 @@ const Register = () => {
           <FormField
             control={form.control}
             name='email'
+            disabled={isSubmitting}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email Address</FormLabel>
@@ -116,12 +109,13 @@ const Register = () => {
           <FormField
             control={form.control}
             name='password'
+            disabled={isSubmitting}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Create Password</FormLabel>
                 <FormControl>
                   <Input
-                    type='password'
+                    type={showPassword ? 'text' : 'password'}
                     placeholder='Password'
                     {...field}
                   />
@@ -129,6 +123,20 @@ const Register = () => {
               </FormItem>
             )}
           />
+          <div className='items-center flex space-x-2 justify-self-end w-fit'>
+            <Checkbox
+              id='show-password'
+              onCheckedChange={() => setShowPassword(!showPassword)}
+              checked={showPassword}
+              disabled={isSubmitting}
+            />
+            <label
+              htmlFor='show-password'
+              className='text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+            >
+              Show password
+            </label>
+          </div>
           {isDirty || errors.password ? (
             <PasswordMessage passwordErrors={passwordState} />
           ) : null}

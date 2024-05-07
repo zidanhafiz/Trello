@@ -17,11 +17,14 @@ const VerifyPage = async ({
 
   if (!user) redirect('/not-found');
 
+  if (user.isVerified) redirect('/');
+
   try {
     const decode = jwt.verify(
       token as string,
       process.env.SECRET_KEY as string
     ) as jwt.JwtPayload;
+
     const email = decode.email;
 
     if (user.email !== email) redirect('/not-found');

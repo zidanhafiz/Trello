@@ -10,6 +10,7 @@ import { LoginSchema, loginSchema } from '@/lib/schema';
 import Heading from '@/components/Heading';
 import ErrorMessage from '@/components/ErrorMessage';
 import { useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const data = {
   email: 'zidan@gmail.com',
@@ -18,6 +19,7 @@ const data = {
 
 const Login = () => {
   const [invalid, setInvalid] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -26,7 +28,7 @@ const Login = () => {
     },
   });
 
-  const { errors } = form.formState;
+  const { errors, isSubmitting } = form.formState;
 
   function onSubmit(values: LoginSchema) {
     const { email, password } = values;
@@ -58,6 +60,7 @@ const Login = () => {
           <FormField
             control={form.control}
             name='email'
+            disabled={isSubmitting}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Email Address</FormLabel>
@@ -75,12 +78,13 @@ const Login = () => {
           <FormField
             control={form.control}
             name='password'
+            disabled={isSubmitting}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Create Password</FormLabel>
                 <FormControl>
                   <Input
-                    type='password'
+                    type={showPassword ? 'text' : 'password'}
                     placeholder='Password'
                     {...field}
                   />
@@ -88,11 +92,26 @@ const Login = () => {
               </FormItem>
             )}
           />
+          <div className='items-center flex space-x-2 justify-self-end w-fit'>
+            <Checkbox
+              id='show-password'
+              onCheckedChange={() => setShowPassword(!showPassword)}
+              checked={showPassword}
+              disabled={isSubmitting}
+            />
+            <label
+              htmlFor='show-password'
+              className='text-sm font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+            >
+              Show password
+            </label>
+          </div>
           {errors.password && <ErrorMessage>{errors.password?.message}</ErrorMessage>}
           {invalid && !errors.password && <ErrorMessage>{invalid}</ErrorMessage>}
           <Button
             type='submit'
             className='w-full mt-5'
+            disabled={isSubmitting}
           >
             Sign In
           </Button>

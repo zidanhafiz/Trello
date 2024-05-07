@@ -3,6 +3,8 @@ import { createUser, getUserByEmail } from '@/lib/models/user';
 import jwt from 'jsonwebtoken';
 import { registerSchema } from '@/lib/schema';
 import { NextRequest, NextResponse } from 'next/server';
+import { VerifyData } from '@/lib/types';
+import { sendVerifyEmail } from '@/lib/mailtrap';
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
@@ -38,13 +40,19 @@ export const POST = async (req: NextRequest) => {
 
     const res = await createUser(data, verifyToken);
 
+    const verifyData = {
+      userId: res.id,
+      username: res.name,
+      email: res.email,
+      token: verifyToken,
+    };
+
+    await sendVerifyEmail(verifyData);
+
     return NextResponse.json(
       {
         message: 'Success create new account!',
         userId: res.id,
-        name: res.name,
-        email: res.email,
-        token: res.token?.token,
       },
       { status: 201 }
     );
