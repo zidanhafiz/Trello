@@ -11,6 +11,9 @@ export const createUser = async (data: User, token: string) => {
         },
       },
     },
+    include: {
+      token: true,
+    },
   });
 };
 

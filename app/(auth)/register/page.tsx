@@ -1,6 +1,6 @@
 'use client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {  useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useEffect, useReducer, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -19,6 +19,8 @@ import {
 } from '@/lib/passwordReducer';
 import { useRouter } from 'next/navigation';
 import { registerNewUser } from '@/lib/fetch/register';
+import { sendVerifyEmail } from '@/lib/mailtrap';
+import { VerifyData } from '@/lib/types';
 
 const Register = () => {
   const [passwordState, setPasswordState] = useReducer(
@@ -51,6 +53,15 @@ const Register = () => {
     if (error) {
       return setError(error?.type as 'root', { message: error.message });
     }
+
+    const verifyData = {
+      userId: data.userId,
+      username: data.name,
+      email: data.email,
+      token: data.token,
+    } as VerifyData;
+
+    await sendVerifyEmail(verifyData);
 
     router.push(`/register/${data.userId}`);
   };

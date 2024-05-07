@@ -39,7 +39,13 @@ export const POST = async (req: NextRequest) => {
     const res = await createUser(data, verifyToken);
 
     return NextResponse.json(
-      { message: 'Success create new account!', userId: res.id },
+      {
+        message: 'Success create new account!',
+        userId: res.id,
+        name: res.name,
+        email: res.email,
+        token: res.token?.token,
+      },
       { status: 201 }
     );
   } catch (error: any) {

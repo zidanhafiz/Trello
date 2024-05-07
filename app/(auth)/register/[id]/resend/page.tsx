@@ -2,6 +2,8 @@ import { getUserById, updateTokenUser } from '@/lib/models/user';
 import { redirect } from 'next/navigation';
 import jwt from 'jsonwebtoken';
 import Heading from '@/components/Heading';
+import { VerifyData } from '@/lib/types';
+import { resendVerifyEmail } from '@/lib/mailtrap';
 
 const ResendPage = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
@@ -14,6 +16,15 @@ const ResendPage = async ({ params }: { params: { id: string } }) => {
   });
 
   await updateTokenUser(id, newToken);
+
+  const verifyData = {
+    userId: user.id,
+    username: user.name,
+    email: user.email,
+    token: newToken,
+  } as VerifyData;
+
+  await resendVerifyEmail(verifyData);
 
   return (
     <div>
