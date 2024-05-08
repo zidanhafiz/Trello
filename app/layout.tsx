@@ -4,6 +4,7 @@ import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
 import Navbar from '@/components/Navbar';
 import { cn } from '@/lib/utils';
+import AuthProvider from '@/components/AuthProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -30,10 +31,12 @@ export default function RootLayout({
           forcedTheme='light'
           disableTransitionOnChange
         >
-          <header>
-            <Navbar />
-          </header>
-          <main className='py-8 px-4 max-w-lg mx-auto'>{children}</main>
+          <AuthProvider>
+            <header>
+              <Navbar />
+            </header>
+            <main className='py-8 px-4 max-w-lg mx-auto'>{children}</main>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -12,6 +12,8 @@ import ErrorMessage from '@/components/ErrorMessage';
 import { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { loginUser } from '@/lib/fetch/login';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/components/AuthProvider';
 
 const Login = () => {
   const [invalid, setInvalid] = useState<string | null>(null);
@@ -28,12 +30,17 @@ const Login = () => {
     formState: { errors, isSubmitting },
   } = form;
 
+  const router = useRouter();
+  const { handleUser } = useAuth();
+
   const onSubmit = async (values: LoginSchema) => {
     const res = await loginUser(values);
 
     if (res.message) return setInvalid(res.message);
 
-    return setInvalid(null);
+    setInvalid(null);
+    handleUser(res.data);
+    return router.push('/');
   };
 
   return (
@@ -109,7 +116,7 @@ const Login = () => {
             className='w-full mt-5'
             disabled={isSubmitting}
           >
-            Sign In
+            {isSubmitting ? 'Loading' : 'Sign In'}
           </Button>
         </form>
       </Form>

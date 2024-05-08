@@ -4,16 +4,19 @@ import jwt from 'jsonwebtoken';
 import { registerSchema } from '@/lib/schema';
 import { NextRequest, NextResponse } from 'next/server';
 import { sendVerifyEmail } from '@/lib/mailtrap';
+import { cookies } from 'next/headers';
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
+  const accessToken = cookies().get('access_token');
+
+  if (accessToken) return NextResponse.redirect(new URL('/', req.url));
 
   try {
     const { name, email, password } = await registerSchema.parseAsync(body);
     const emailExist = await getUserByEmail(email);
 
     if (emailExist) {
-      console.log('email error');
       return NextResponse.json(
         {
           fieldError: 'email',

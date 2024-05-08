@@ -7,6 +7,9 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (req: NextRequest) => {
   const body = await req.json();
+  const accessToken = cookies().get('access_token');
+
+  if (accessToken) return NextResponse.redirect(new URL('/', req.url));
 
   try {
     const { email, password } = await loginSchema.parseAsync(body);
@@ -33,6 +36,12 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    if (!user.isVerified)
+      return NextResponse.json(
+        { message: 'Your account is not verified. Please verify first!' },
+        { status: 403 }
+      );
+
     const accessToken = jwt.sign(
       {
         userId: user.id,
@@ -52,7 +61,13 @@ export const POST = async (req: NextRequest) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    return NextResponse.json({ status: 201 });
+    const data = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    };
+
+    return NextResponse.json({ data }, { status: 201 });
   } catch (error: any) {
     console.error(error);
     return NextResponse.json({ message: error.message }, { status: 400 });

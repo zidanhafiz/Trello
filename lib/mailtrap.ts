@@ -35,7 +35,6 @@ export const sendVerifyEmail = async (verifyData: VerifyData) => {
     },
   });
 
-  console.log(res.message_ids);
   return res;
 };
 
@@ -57,6 +56,5 @@ export const resendVerifyEmail = async (verifyData: VerifyData) => {
     },
   });
 
-  console.log(res.message_ids);
   return res;
 };
