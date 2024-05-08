@@ -31,10 +31,9 @@ const Login = () => {
   const onSubmit = async (values: LoginSchema) => {
     const res = await loginUser(values);
 
-    if (res.message) return setInvalid(res.message)
+    if (res.message) return setInvalid(res.message);
 
-    setInvalid(null);
-
+    return setInvalid(null);
   };
 
   return (

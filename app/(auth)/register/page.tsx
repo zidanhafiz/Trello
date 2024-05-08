@@ -21,6 +21,9 @@ import { useRouter } from 'next/navigation';
 import { registerNewUser } from '@/lib/fetch/register';
 import { Checkbox } from '@/components/ui/checkbox';
 
+import checkImg from '/public/check.png';
+import uncheckImg from '/public/uncheck.png';
+
 const Register = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [passwordState, setPasswordState] = useReducer(
@@ -200,7 +203,7 @@ const PasswordMessage = ({ passwordErrors }: { passwordErrors: PasswordState }) 
             className='flex items-center gap-2 leading-3'
           >
             <Image
-              src={err.error ? '/uncheck.png' : '/check.png'}
+              src={err.error ? uncheckImg : checkImg}
               alt='check'
               width={16}
               height={16}

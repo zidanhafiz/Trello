@@ -2,13 +2,14 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
+import logo from '/public/logo.png';
 
 const Navbar = () => {
   return (
     <nav className='flex justify-between items-center p-4 md:py-4 md:px-14 bg-white border-b-2'>
       <Link href='/'>
         <Image
-          src='/logo.png'
+          src={logo}
           alt='trello'
           width={88}
           height={88}
