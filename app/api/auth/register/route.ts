@@ -22,9 +22,8 @@ export const POST = async (req: NextRequest) => {
 
   // Main handler
   const body = await req.json();
-  const accessToken = cookies().get('access_token');
 
-  if (accessToken) return NextResponse.redirect(new URL('/', req.url));
+  cookies().delete('access_token');
 
   try {
     const { name, email, password } = await registerSchema.parseAsync(body);

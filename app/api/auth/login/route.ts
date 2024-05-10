@@ -21,9 +21,8 @@ export const POST = async (req: NextRequest) => {
 
   // Main handler
   const body = await req.json();
-  const accessToken = cookies().get('access_token');
 
-  if (accessToken) return NextResponse.redirect(new URL('/', req.url));
+  cookies().delete('access_token');
 
   try {
     const { email, password } = await loginSchema.parseAsync(body);
@@ -63,7 +62,7 @@ export const POST = async (req: NextRequest) => {
         email: user.email,
       },
       process.env.SECRET_KEY as string,
-      { expiresIn: '1d' }
+      { expiresIn: '1h' }
     );
 
     await updateAccessTokenUser(user.id, accessToken);
@@ -72,7 +71,7 @@ export const POST = async (req: NextRequest) => {
       httpOnly: true,
       sameSite: 'none',
       secure: true,
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 60 * 1000,
     });
 
     const data = {

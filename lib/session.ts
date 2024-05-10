@@ -1,6 +1,7 @@
 'use server';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
+import { redirect } from 'next/navigation';
 
 export const getSession = async () => {
   const accessToken = cookies().get('access_token');
@@ -18,7 +19,7 @@ export const getSession = async () => {
         email: decode.email,
       };
     } catch (error: any) {
-      throw new Error(error.message);
+      redirect('/login');
     }
   }
 };
