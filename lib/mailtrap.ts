@@ -24,6 +24,7 @@ export const sendVerifyEmail = async (verifyData: VerifyData) => {
   ];
 
   const verifyLink = `${URL}/register/${verifyData.userId}/verify?token=${verifyData.token}`;
+  const resendLink = `${URL}/register/${verifyData.userId}/resend`;
 
   const res = await client.send({
     from: sender,
@@ -32,6 +33,7 @@ export const sendVerifyEmail = async (verifyData: VerifyData) => {
     template_variables: {
       user_name: verifyData.username,
       verify_link: verifyLink,
+      resend_link: resendLink,
     },
   });
 
@@ -46,6 +48,7 @@ export const resendVerifyEmail = async (verifyData: VerifyData) => {
   ];
 
   const verifyLink = `${URL}/register/${verifyData.userId}/verify?token=${verifyData.token}`;
+  const resendLink = `${URL}/register/${verifyData.userId}/resend`;
 
   const res = await client.send({
     from: sender,
@@ -53,6 +56,7 @@ export const resendVerifyEmail = async (verifyData: VerifyData) => {
     template_uuid: '8bbbd675-db8e-4241-ad7c-ab754e3bf8f5',
     template_variables: {
       verify_link: verifyLink,
+      resend_link: resendLink,
     },
   });
 

@@ -32,10 +32,14 @@ export async function middleware(req: NextRequest) {
 
   // If accessToken is empty
   if (!accessToken) {
-    authRoutes.forEach((route) => {
-      if (!pathname.startsWith(route))
-        return NextResponse.redirect(new URL('/login', req.url));
+    const isAuthRoute = authRoutes.some((route) => {
+      if (!pathname.startsWith(route)) {
+        return false;
+      }
+      return true;
     });
+
+    if (!isAuthRoute) return NextResponse.redirect(new URL('/login', req.url));
   }
   return NextResponse.next();
 }

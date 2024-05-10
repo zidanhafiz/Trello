@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import Heading from '@/components/Heading';
 import { VerifyData } from '@/lib/types';
 import { resendVerifyEmail } from '@/lib/mailtrap';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 const ResendPage = async ({ params }: { params: { id: string } }) => {
   const { id } = params;
@@ -32,11 +34,14 @@ const ResendPage = async ({ params }: { params: { id: string } }) => {
     <div>
       <Heading size='md'>Confirmation link was sent into your email!</Heading>
       <div className='bg-white p-4 rounded-md shadow-sm'>
-        <p className='text-slate-500'>
+        <p className='text-slate-500 mb-5'>
           A confirmation link has been sent to your email address{' '}
           <strong>{user.email}</strong>. Click the link to verify your account and unlock
           full access.
         </p>
+        <Button asChild>
+          <Link href={`/register/${id}/resend`}>Resend link again</Link>
+        </Button>
       </div>
     </div>
   );
