@@ -50,3 +50,10 @@ export const loginSchema = z.object({
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;
+
+export const todoSchema = z.object({
+  title: z.string().min(3).max(100),
+  content: z.string().min(3).max(255),
+});
+
+export type TodoSchema = z.infer<typeof todoSchema>;

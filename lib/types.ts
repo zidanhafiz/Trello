@@ -11,3 +11,13 @@ export type VerifyData = {
   email: string;
   token: string;
 };
+
+export type Todo = {
+  id?: string;
+  title: string;
+  content: string;
+  userId: string;
+  finished?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+};
