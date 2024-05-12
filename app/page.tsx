@@ -6,7 +6,6 @@ import jwt from 'jsonwebtoken';
 import Link from 'next/link';
 import { getAllTodos } from '@/lib/models/todo';
 import LogoutButton from '@/components/LogoutButton';
-import { NextRequest } from 'next/server';
 
 const getUserBySession = async () => {
   const accessToken = cookies().get('access_token');
