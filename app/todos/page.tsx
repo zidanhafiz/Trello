@@ -10,17 +10,39 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Eye, Trash2 } from 'lucide-react';
 import { DeleteAlert } from '@/components/DeleteAlert';
 import { Todo } from '@/lib/types';
 import { useTodos } from '@/lib/hooks/useTodos';
 import { Toaster } from '@/components/ui/toaster';
+import { Skeleton } from '@/components/ui/skeleton';
+import { deleteTodo } from '@/lib/fetch/todo';
+import { toast } from '@/components/ui/use-toast';
+import { useRouter } from 'next/navigation';
 
 const Todos = () => {
   const { todos, isLoading } = useTodos();
+  const router = useRouter();
 
-  const deleteTodoHandle = (id: string) => {
-    console.log('deleted');
+  const deleteTodoHandle = async (id: string) => {
+    try {
+      await deleteTodo(id as string);
+
+      toast({
+        title: 'Success',
+        description: 'Success delete todo!',
+      });
+
+      router.refresh();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Error delete todo!',
+        variant: 'destructive',
+      });
+
+      router.refresh();
+    }
   };
 
   return (
@@ -74,7 +96,15 @@ const TodoItems = ({
   isLoading: boolean;
   deleteTodoHandle: (id: string) => void;
 }) => {
-  if (isLoading) return <p>wait</p>;
+  if (isLoading) {
+    return (
+      <div className='grid gap-3'>
+        <Skeleton className='w-full h-8' />
+        <Skeleton className='w-full h-8' />
+        <Skeleton className='w-full h-8' />
+      </div>
+    );
+  }
 
   const filteredTodos = todos.filter((todo) => todo.finished === isFinished);
 
@@ -90,7 +120,7 @@ const TodoItems = ({
           <div className='space-x-2'>
             <Button asChild>
               <Link href={`/todos/${todo.id}`}>
-                <Pencil size={16} />
+                <Eye size={16} />
               </Link>
             </Button>
             <DeleteAlert

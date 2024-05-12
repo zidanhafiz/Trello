@@ -1,8 +1,8 @@
 'use client';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-
 import Heading from '@/components/Heading';
+import { Separator } from '@/components/ui/separator';
+import { useTodo } from '@/lib/hooks/useTodos';
+import { useParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import {
   Form,
@@ -15,12 +15,24 @@ import {
 import { Input } from '@/components/ui/input';
 import { todoSchema, TodoSchema } from '@/lib/schema';
 import { Textarea } from '@/components/ui/textarea';
-import Link from 'next/link';
-import { createNewTodo } from '@/lib/fetch/todo';
 import { useToast } from '@/components/ui/use-toast';
 import { useRouter } from 'next/navigation';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { updateTodo } from '@/lib/fetch/todo';
+import { Todo } from '@/lib/types';
 
-const Create = () => {
+const Edit = () => {
+  const { id } = useParams();
+  const { todo, isLoading } = useTodo(id as string);
   const { toast } = useToast();
   const router = useRouter();
   const form = useForm<TodoSchema>({
@@ -28,16 +40,23 @@ const Create = () => {
     defaultValues: {
       title: '',
       content: '',
+      finished: false,
     },
   });
 
   const {
     formState: { isSubmitting },
+    setValue,
   } = form;
 
   const onSubmit = async (values: TodoSchema) => {
     try {
-      await createNewTodo(values);
+      const data = {
+        id,
+        ...values,
+      } as Todo;
+
+      await updateTodo(data);
 
       toast({
         title: 'Success!',
@@ -55,9 +74,17 @@ const Create = () => {
     }
   };
 
+  useEffect(() => {
+    setValue('title', todo?.title);
+    setValue('content', todo?.content);
+    setValue('finished', todo?.finished);
+  }, [setValue, todo]);
+
   return (
     <div>
-      <Heading size='md'>Create new todo</Heading>
+      <Heading size='md'>{todo?.title}</Heading>
+      <Separator className='my-5' />
+
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
@@ -98,18 +125,42 @@ const Create = () => {
               </FormItem>
             )}
           />
+          <FormField
+            control={form.control}
+            name='finished'
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Proggress</FormLabel>
+                <Select
+                  onValueChange={(e) => field.onChange(e === 'Finished' ? true : false)}
+                  defaultValue={field.value ? 'Finished' : 'Unfinished'}
+                >
+                  <FormControl>
+                    <SelectTrigger className='bg-white'>
+                      <SelectValue placeholder='Select proggress' />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value={'Finished'}>Finished</SelectItem>
+                    <SelectItem value={'Unfinished'}>Unfinished</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
           <div className='flex justify-end gap-4 mt-4'>
             <Button
               variant='secondary'
-              asChild
+              onClick={() => router.push('/todos')}
             >
-              <Link href='/todos'>Cancel</Link>
+              Cancel
             </Button>
             <Button
               type='submit'
               disabled={isSubmitting}
             >
-              {isSubmitting ? 'loading' : 'Create todo'}
+              {isSubmitting ? 'loading' : 'Update todo'}
             </Button>
           </div>
         </form>
@@ -118,4 +169,4 @@ const Create = () => {
   );
 };
 
-export default Create;
+export default Edit;

@@ -15,11 +15,20 @@ export const getAllTodos = async (userId: string) => {
   });
 };
 
-export const updateTodoById = async (id: string) => {
-  return await prisma.todo.findMany({
+export const getTodoById = async (id: string) => {
+  return await prisma.todo.findUnique({
     where: {
       id,
     },
+  });
+};
+
+export const updateTodoById = async (id: string, data: Todo) => {
+  return await prisma.todo.update({
+    where: {
+      id,
+    },
+    data,
   });
 };
 
