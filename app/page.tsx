@@ -4,6 +4,8 @@ import Heading from '@/components/Heading';
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import Link from 'next/link';
+import { getAllTodos } from '@/lib/models/todo';
+import LogoutButton from '@/components/LogoutButton';
 
 const getUserBySession = async () => {
   const accessToken = cookies().get('access_token');
@@ -22,8 +24,19 @@ const getUserBySession = async () => {
   }
 };
 
+const getUserTodos = async (userId: string) => {
+  try {
+    const data = await getAllTodos(userId);
+
+    return data;
+  } catch (error: any) {
+    throw new Error(error.message);
+  }
+};
+
 export default async function Home() {
   const user = await getUserBySession();
+  const todos = await getUserTodos(user?.userId);
 
   return (
     <div>
@@ -48,7 +61,7 @@ export default async function Home() {
                 </tr>
                 <tr>
                   <td>Total todos</td>
-                  <td>: 10</td>
+                  <td>: {todos.length}</td>
                 </tr>
               </tbody>
             </table>
@@ -58,7 +71,7 @@ export default async function Home() {
             <Button asChild>
               <Link href='/todos'>See my todos</Link>
             </Button>
-            <Button variant='destructive'>Delete Account</Button>
+            <LogoutButton />
           </div>
         </div>
       </div>

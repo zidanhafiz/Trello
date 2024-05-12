@@ -27,12 +27,12 @@ model Todo {
   updatedAt DateTime @updatedAt
   userId    String
   finished  Boolean  @default(false)
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Token {
   id     String @id @default(uuid())
   token  String @unique
   userId String @unique
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
