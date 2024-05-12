@@ -57,6 +57,7 @@ const Register = () => {
       return setError(error?.type as 'root', { message: error.message });
     }
 
+    router.refresh();
     return router.push(`/register/${data.userId}`);
   };
 

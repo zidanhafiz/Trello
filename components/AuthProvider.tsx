@@ -1,5 +1,5 @@
 'use client';
-import { getSession } from '@/lib/session';
+import { getSession, revalidate } from '@/lib/session';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 type User = {
@@ -43,6 +43,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       .then((res) => setUser(res))
       .catch((err) => console.error(err));
   }, []);
+
+  useEffect(() => {
+    revalidate();
+  }, [user]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

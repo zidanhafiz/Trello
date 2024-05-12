@@ -40,7 +40,7 @@ const Login = () => {
 
     setInvalid(null);
     handleUser(res.data);
-    return router.push('/');
+    router.push('/');
   };
 
   return (

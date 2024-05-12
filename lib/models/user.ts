@@ -38,7 +38,9 @@ export const updateIsVerifiedUser = async (id: string, verified: boolean) => {
     data: {
       isVerified: verified,
       token: {
-        delete: true,
+        update: {
+          token: '0',
+        },
       },
     },
   });

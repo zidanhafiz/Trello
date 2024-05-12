@@ -2,6 +2,7 @@
 import { cookies } from 'next/headers';
 import jwt from 'jsonwebtoken';
 import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 export const getSession = async () => {
   const accessToken = cookies().get('access_token');
@@ -22,4 +23,8 @@ export const getSession = async () => {
       redirect('/login');
     }
   }
+};
+
+export const revalidate = () => {
+  revalidatePath('/');
 };
